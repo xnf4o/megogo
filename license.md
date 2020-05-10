@@ -1,5 +1,3 @@
 # The license
 
-Copyright (c) author name <author email>
-
-...Add your license text here...
+Copyright (c) xnf4o
