@@ -1,6 +1,6 @@
 {
     "name": "xnf4o/megogo",
-    "description": ":package_description",
+    "description": "Laravel MeGoGo API integration",
     "license": "license",
     "keywords": ["Laravel", "Megogo"],
     "require": {
