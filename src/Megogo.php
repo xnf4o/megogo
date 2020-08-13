@@ -17,6 +17,8 @@ class Megogo
     }
 
     /**
+     * Используется для получения информации о видео.
+     *
      * @param string $id
      * @return StreamInterface
      * Получение списка видео из определенной категории и сортировка контента для формирования различных вариантов выдачи пользователю
@@ -63,14 +65,16 @@ class Megogo
      * @return StreamInterface
      * Получение списка видео из определенной категории и сортировка контента для формирования различных вариантов выдачи пользователю
      */
-    public function getVideo($sort = 'popular'): StreamInterface
+    public function getVideo($category_id, $sort = 'popular'): StreamInterface
     {
         $data = [
             'sort' => $sort,
+            'category_id' => $category_id,
         ];
         $response = $this->client->request('GET', $this->api_url.'/video', [
             'query' => [
                 'sort' => $sort,
+                'category_id' => $category_id,
                 'sign' => $this->makeHash($data),
             ],
         ]);
