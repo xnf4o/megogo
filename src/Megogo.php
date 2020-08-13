@@ -8,6 +8,7 @@ use Psr\Http\Message\StreamInterface;
 class Megogo
 {
     private $api_url = 'https://api.megogo.net/v1';
+
     protected $client;
 
     public function __construct()
@@ -25,11 +26,33 @@ class Megogo
         $data = [
             'id' => $id,
         ];
-        $response = $this->client->request('GET', $this->api_url . '/video/info', [
+        $response = $this->client->request('GET', $this->api_url.'/video/info', [
             'query' => [
                 'id' => $id,
                 'sign' => $this->makeHash($data),
-            ]
+            ],
+        ]);
+
+        return $response->getBody();
+    }
+
+    /**
+     * @param $text
+     * @param int $limit
+     * @return mixed
+     */
+    public function search($text, $limit = 20)
+    {
+        $data = [
+            'text' => $text,
+            'limit' => $limit,
+        ];
+        $response = $this->client->request('GET', $this->api_url.'/search', [
+            'query' => [
+                'text' => $text,
+                'limit' => $limit,
+                'sign' => $this->makeHash($data),
+            ],
         ]);
 
         return $response->getBody();
@@ -45,11 +68,11 @@ class Megogo
         $data = [
             'sort' => $sort,
         ];
-        $response = $this->client->request('GET', $this->api_url . '/video', [
+        $response = $this->client->request('GET', $this->api_url.'/video', [
             'query' => [
                 'sort' => $sort,
                 'sign' => $this->makeHash($data),
-            ]
+            ],
         ]);
 
         return $response->getBody();
@@ -63,13 +86,14 @@ class Megogo
      */
     private function makeHash($data = null, $hash = null): string
     {
-        if (!empty($data)) {
+        if (! empty($data)) {
             foreach ($data as $key => $value) {
-                $hash .= $key . '=' . $value;
+                $hash .= $key.'='.$value;
             }
         }
         $hash .= config('megogo.private_key');
-        return md5($hash) . config('megogo.public_key');
+
+        return md5($hash).config('megogo.public_key');
     }
 
     /**
@@ -78,10 +102,10 @@ class Megogo
      */
     public function getDigest(): StreamInterface
     {
-        $response = $this->client->request('GET', $this->api_url . '/digest', [
+        $response = $this->client->request('GET', $this->api_url.'/digest', [
             'query' => [
                 'sign' => $this->makeHash(),
-            ]
+            ],
         ]);
 
         return $response->getBody();
@@ -99,12 +123,12 @@ class Megogo
             'id' => $id,
             'limit' => $limit,
         ];
-        $response = $this->client->request('GET', $this->api_url . '/video/collection', [
+        $response = $this->client->request('GET', $this->api_url.'/video/collection', [
             'query' => [
                 'id' => $id,
                 'limit' => $limit,
                 'sign' => $this->makeHash($data),
-            ]
+            ],
         ]);
 
         return $response->getBody();
@@ -116,10 +140,10 @@ class Megogo
      */
     public function getConfiguration(): StreamInterface
     {
-        $response = $this->client->request('GET', $this->api_url . '/configuration', [
+        $response = $this->client->request('GET', $this->api_url.'/configuration', [
             'query' => [
                 'sign' => $this->makeHash(),
-            ]
+            ],
         ]);
 
         return $response->getBody();
@@ -131,11 +155,12 @@ class Megogo
      */
     public function getCollections(): StreamInterface
     {
-        $response = $this->client->request('GET', $this->api_url . '/collections', [
+        $response = $this->client->request('GET', $this->api_url.'/collections', [
             'query' => [
                 'sign' => $this->makeHash(),
-            ]
+            ],
         ]);
+
         return $response->getBody();
     }
 
@@ -144,17 +169,18 @@ class Megogo
         $data = [
             'video_id' => $video_id,
         ];
-        $response = $this->client->request('GET', $this->api_url . '/stream', [
+        $response = $this->client->request('GET', $this->api_url.'/stream', [
             'query' => [
                 'video_id' => $video_id,
                 'sign' => $this->makeHash($data),
-            ]
+            ],
         ]);
 
         return $response->getBody();
     }
 
-    public function auth(){
+    public function auth()
+    {
 
     }
 }
