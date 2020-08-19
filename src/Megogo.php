@@ -61,23 +61,32 @@ class Megogo
     }
 
     /**
-     * @param $category_id
      * @param string $sort
+     * @param int $page
+     * @param $category_id
      * @return StreamInterface
      * Получение списка видео из определенной категории и сортировка контента для формирования различных вариантов выдачи пользователю
      */
-    public function getVideo($category_id, $sort = 'popular'): StreamInterface
+    public function getVideo($sort = 'popular', $page = 1, $category_id = null): StreamInterface
     {
+        $offset = 20 * $page;
         $data = [
             'sort' => $sort,
-            'category_id' => $category_id,
+            'offset' => $offset
         ];
+        if($category_id){
+            $data['category_id'] = $category_id;
+        }
+        $query = [
+            'sort' => $sort,
+            'offset' => $offset,
+            'sign' => $this->makeHash($data)
+        ];
+        if($category_id){
+            $query['category_id'] = $category_id;
+        }
         $response = $this->client->request('GET', $this->api_url.'/video', [
-            'query' => [
-                'sort' => $sort,
-                'category_id' => $category_id,
-                'sign' => $this->makeHash($data),
-            ],
+            'query' => $query,
         ]);
 
         return $response->getBody();
