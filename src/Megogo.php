@@ -8,6 +8,7 @@ use Psr\Http\Message\StreamInterface;
 class Megogo
 {
     private $api_url = 'https://api.megogo.net/v1';
+    private $bill_url = 'https://billing.megogo.net/';
 
     protected $client;
 
@@ -193,8 +194,17 @@ class Megogo
         return $response->getBody();
     }
 
-    public function auth()
-    {
-
+    /**
+     * @param string $identifier Уникальный идентификатор пользователя на стороне партнера (номер договора, лицевого счета, логин и т.п.)
+     * @return string Внутренний идентификатор пользователя на MEGOGO
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function register($identifier){
+        $response = $this->client->request('GET', $this->bill_url.'/partners/' . config('megogo.partner_id') . '/user/create', [
+            'query' => [
+                'identifier' => $identifier,
+            ],
+        ]);
+        return json_decode($response->getBody()->getContents())->uid;
     }
 }

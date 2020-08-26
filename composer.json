@@ -6,7 +6,8 @@
     "keywords": ["Laravel", "Megogo"],
     "require": {
         "illuminate/support": "~5|~6|~7",
-        "guzzlehttp/guzzle": "^6.5"
+        "guzzlehttp/guzzle": "^6.5",
+      "ext-json": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
