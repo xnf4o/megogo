@@ -209,6 +209,8 @@ class Megogo
     }
 
     /**
+     * Авторизация на MEGOGO
+     *
      * @param integer $id ID клиента MEGOGO
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -227,6 +229,35 @@ class Megogo
                 'sign' => $this->makeHash($data),
             ],
         ]);
+
+        return json_decode($response->getBody()->getContents());
+    }
+
+    /**
+     * Информация о доступных подписках
+     *
+     * @param null $token Токен, если есть
+     * @return mixed
+     */
+    public function subscriptionInfo($token = null){
+        if($token) {
+            $data = [
+                'access_token' => $token,
+            ];
+            $response = $this->client->request('GET', $this->api_url.'/subscription/info', [
+                'query' => [
+                    'access_token' => $token,
+                    'sign' => $this->makeHash($data),
+                ],
+            ]);
+        } else {
+            $data = [];
+            $response = $this->client->request('GET', $this->api_url.'/subscription/info', [
+                'query' => [
+                    'sign' => $this->makeHash($data),
+                ],
+            ]);
+        }
 
         return json_decode($response->getBody()->getContents());
     }
