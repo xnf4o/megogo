@@ -207,4 +207,27 @@ class Megogo
         ]);
         return json_decode($response->getBody()->getContents())->uid;
     }
+
+    /**
+     * @param integer $id ID клиента MEGOGO
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function auth($id){
+        $data = [
+            'isdn' => $id,
+            'partner_key' => config('megogo.partner_id'),
+            'token' => md5($id.config('megogo.partner_id').config('megogo.salt')),
+        ];
+        $response = $this->client->request('GET', $this->api_url.'/auth/by_partners', [
+            'query' => [
+                'isdn' => $id,
+                'partner_key' => config('megogo.partner_id'),
+                'token' => md5($id.config('megogo.partner_id').config('megogo.salt')),
+                'sign' => $this->makeHash($data),
+            ],
+        ]);
+
+        return json_decode($response->getBody()->getContents());
+    }
 }
