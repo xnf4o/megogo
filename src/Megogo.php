@@ -290,18 +290,30 @@ class Megogo
     }
 
     /**
+     * @param string $sort
+     * @param int $page
+     * @param null $category_id
      * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function subscription(){
+    public function subscription($sort = 'popular', $page = 1, $category_id = null){
+        $offset = 20 * $page;
         $data = [
-            'limit' => 20,
+            'sort' => $sort,
+            'offset' => $offset
         ];
+        if($category_id){
+            $data['category_id'] = $category_id;
+        }
+        $query = [
+            'sort' => $sort,
+            'offset' => $offset,
+            'sign' => $this->makeHash($data)
+        ];
+        if($category_id){
+            $query['category_id'] = $category_id;
+        }
         $response = $this->client->request('GET', $this->api_url.'/subscription', [
-            'query' => [
-                'limit' => 20,
-                'sign' => $this->makeHash($data),
-            ],
+            'query' => $query,
         ]);
 
         return json_decode($response->getBody()->getContents());
