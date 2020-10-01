@@ -261,4 +261,49 @@ class Megogo
 
         return json_decode($response->getBody()->getContents());
     }
+
+    /**
+     * Изменение статуса подписки пользователя
+     *
+     * @param string $action Операция, которую необходимо проделать с подпиской (subscribe, unsubscribe, suspend, resume)
+     * @param integer $userId Уникальный идентификатор пользователя на стороне партнера (номер договора, лицевого счета, логин и т.п.)
+     * @param integer $id Идентификатор подписки на стороне партнера
+     */
+    public function buySubscription($action, $userId, $id){
+        $data = [
+            'serviceId ' => $id,
+            'operation' => $action,
+            'identifier' => $userId,
+            'partnerId ' => config('megogo.partner_id'),
+        ];
+        $response = $this->client->request('GET', $this->bill_url.'/auth/by_partners', [
+            'query' => [
+                'serviceId ' => $id,
+                'operation' => $action,
+                'identifier' => $userId,
+                'partnerId ' => config('megogo.partner_id'),
+                'sign' => $this->makeHash($data),
+            ],
+        ]);
+
+        return json_decode($response->getBody()->getContents());
+    }
+
+    /**
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function subscription(){
+        $data = [
+            'limit' => 20,
+        ];
+        $response = $this->client->request('GET', $this->api_url.'/subscription', [
+            'query' => [
+                'limit' => 20,
+                'sign' => $this->makeHash($data),
+            ],
+        ]);
+
+        return json_decode($response->getBody()->getContents());
+    }
 }
