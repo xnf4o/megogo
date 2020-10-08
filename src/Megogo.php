@@ -269,20 +269,12 @@ class Megogo
      * @param integer $userId Уникальный идентификатор пользователя на стороне партнера (номер договора, лицевого счета, логин и т.п.)
      * @param integer $id Идентификатор подписки на стороне партнера
      */
-    public function buySubscription($action, $userId, $id){
-        $data = [
-            'serviceId ' => $id,
-            'operation' => $action,
-            'identifier' => $userId,
-            'partnerId ' => config('megogo.partner_id'),
-        ];
-        $response = $this->client->request('GET', $this->bill_url.'/auth/by_partners', [
+    public function buySubscription($action, $userId, $id)
+    {
+        $response = $this->client->request('GET', $this->bill_url.'/partners/' . config('megogo.partner_id') . '/subscription/' . $action, [
             'query' => [
-                'serviceId ' => $id,
-                'operation' => $action,
-                'identifier' => $userId,
-                'partnerId ' => config('megogo.partner_id'),
-                'sign' => $this->makeHash($data),
+                'serviceId' => $id,
+                'userId' => $userId,
             ],
         ]);
 
