@@ -8,7 +8,7 @@ use Psr\Http\Message\StreamInterface;
 class Megogo
 {
     private $api_url = 'https://api.megogo.net/v1';
-    private $bill_url = 'https://billing.megogo.net/';
+    private $bill_url = 'https://billing.megogo.net';
 
     protected $client;
 
@@ -179,8 +179,23 @@ class Megogo
         return $response->getBody();
     }
 
-    public function getStream($video_id = 4520825): StreamInterface
+    public function getStream($video_id = 4520825, $token = null): StreamInterface
     {
+        if($token){
+            $data = [
+                'video_id' => $video_id,
+                'access_token' => $token,
+            ];
+            $response = $this->client->request('GET', $this->api_url.'/stream', [
+                'query' => [
+                    'video_id' => $video_id,
+                    'access_token' => $token,
+                    'sign' => $this->makeHash($data),
+                ],
+            ]);
+
+            return $response->getBody();
+        }
         $data = [
             'video_id' => $video_id,
         ];
@@ -191,7 +206,7 @@ class Megogo
             ],
         ]);
 
-        return $response->getBody();
+        return $response->getBody()->getContents();
     }
 
     /**
@@ -267,7 +282,7 @@ class Megogo
      *
      * @param string $action Операция, которую необходимо проделать с подпиской (subscribe, unsubscribe, suspend, resume)
      * @param integer $userId Уникальный идентификатор пользователя на стороне партнера (номер договора, лицевого счета, логин и т.п.)
-     * @param integer $id Идентификатор подписки на стороне партнера
+     * @param string $id Идентификатор подписки на стороне партнера
      */
     public function buySubscription($action, $userId, $id)
     {
@@ -282,10 +297,8 @@ class Megogo
     }
 
     /**
-     * @param string $sort
-     * @param int $page
-     * @param null $category_id
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function subscription($sort = 'popular', $page = 1, $category_id = null){
         $offset = 20 * $page;
@@ -306,6 +319,24 @@ class Megogo
         }
         $response = $this->client->request('GET', $this->api_url.'/subscription', [
             'query' => $query,
+        ]);
+
+        return json_decode($response->getBody()->getContents());
+    }
+
+    /**
+     * @param $action
+     * @param $userId
+     * @param $id
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function userSubscription($userId)
+    {
+        $response = $this->client->request('GET', $this->bill_url.'/partners/' . config('megogo.partner_id') . '/user/subscriptions', [
+            'query' => [
+                'identifier' => $userId,
+            ],
         ]);
 
         return json_decode($response->getBody()->getContents());
