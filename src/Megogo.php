@@ -24,17 +24,31 @@ class Megogo
      * @return StreamInterface
      * Получение списка видео из определенной категории и сортировка контента для формирования различных вариантов выдачи пользователю
      */
-    public function getVideoInfo($id = '3950851'): StreamInterface
+    public function getVideoInfo($id = '3950851', $token = null): StreamInterface
     {
-        $data = [
-            'id' => $id,
-        ];
-        $response = $this->client->request('GET', $this->api_url.'/video/info', [
-            'query' => [
+        if($token){
+            $data = [
                 'id' => $id,
-                'sign' => $this->makeHash($data),
-            ],
-        ]);
+                'access_token' => $token,
+            ];
+            $response = $this->client->request('GET', $this->api_url.'/video/info', [
+                'query' => [
+                    'id' => $id,
+                    'access_token' => $token,
+                    'sign' => $this->makeHash($data),
+                ],
+            ]);
+        }else {
+            $data = [
+                'id' => $id,
+            ];
+            $response = $this->client->request('GET', $this->api_url.'/video/info', [
+                'query' => [
+                    'id' => $id,
+                    'sign' => $this->makeHash($data),
+                ],
+            ]);
+        }
 
         return $response->getBody();
     }
