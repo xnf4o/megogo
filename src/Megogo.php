@@ -355,4 +355,27 @@ class Megogo
 
         return json_decode($response->getBody()->getContents());
     }
+
+    /**
+     * @param $like
+     * @param $video_id
+     * @param $token
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function addVote($like, $video_id, $token){
+        $data = [
+            'like' => $like,
+            'video_id' => $video_id,
+            'access_token' => $token,
+        ];
+        $response = $this->client->request('GET', $this->api_url.'/vote/add', [
+            'query' => [
+                'like' => $like,
+                'video_id' => $video_id,
+                'access_token' => $token,
+                'sign' => $this->makeHash($data),
+            ],
+        ]);
+        return $response->getBody()->getContents();
+    }
 }
