@@ -190,18 +190,62 @@ class Megogo
      * @return StreamInterface
      * Получение доступных TVOD объектов
      */
-    public function getVideoCollections($id = 21571, $limit = 500): StreamInterface
+    public function getVideoCollections($token, $id, $sort, $page, $category_id, $genre, $country, $year_min, $year_max): StreamInterface
     {
+        $offset = 20 * $page;
         $data = [
             'id' => $id,
-            'limit' => $limit,
+            'offset' => $offset,
         ];
+        if ($category_id) {
+            $data['category_id'] = $category_id;
+        }
+        if ($sort) {
+            $data['sort'] = $sort;
+        }
+        if ($genre) {
+            $data['genre'] = $genre;
+        }
+        if ($country) {
+            $data['country'] = $country;
+        }
+        if ($year_min) {
+            $data['year_min'] = $year_min;
+        }
+        if ($year_max) {
+            $data['year_max'] = $year_max;
+        }
+        if ($token) {
+            $data['access_token'] = $token;
+        }
+        $query = [
+            'id' => $id,
+            'offset' => $offset,
+            'sign' => $this->makeHash($data)
+        ];
+        if ($category_id) {
+            $query['category_id'] = $category_id;
+        }
+        if ($sort) {
+            $query['sort'] = $sort;
+        }
+        if ($genre) {
+            $query['genre'] = $genre;
+        }
+        if ($country) {
+            $query['country'] = $country;
+        }
+        if ($year_min) {
+            $query['year_min'] = $year_min;
+        }
+        if ($year_max) {
+            $query['year_max'] = $year_max;
+        }
+        if ($token) {
+            $query['access_token'] = $token;
+        }
         $response = $this->client->request('GET', $this->api_url . '/video/collection', [
-            'query' => [
-                'id' => $id,
-                'limit' => $limit,
-                'sign' => $this->makeHash($data),
-            ],
+            'query' => $query,
         ]);
 
         return $response->getBody();
