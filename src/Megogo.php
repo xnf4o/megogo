@@ -281,7 +281,15 @@ class Megogo
         return $response->getBody();
     }
 
-    public function getStream($video_id = 4520825, $token = null): StreamInterface
+    /**
+     * Получение стрима видео / трейлера
+     *
+     * @param int $video_id
+     * @param null $token
+     * @return StreamInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getStream($video_id = 4520825, $token = null)
     {
         if ($token) {
             $data = [
