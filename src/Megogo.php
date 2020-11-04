@@ -304,7 +304,7 @@ class Megogo
                 ],
             ]);
 
-            return $response->getBody();
+            return $response->getBody()->getContents();
         }
         $data = [
             'video_id' => $video_id,
