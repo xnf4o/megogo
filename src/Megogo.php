@@ -107,7 +107,11 @@ class Megogo
      */
     public function getVideo($token, $sort, $page, $category_id, $genre, $country, $year_min, $year_max)
     {
-        $offset = 20 * $page;
+        if($page >= 2){
+            $offset = 20 * $page;
+        } else {
+            $offset = 0;
+        }
         $data = [
             'offset' => $offset,
             'subscription_id' => 131,
