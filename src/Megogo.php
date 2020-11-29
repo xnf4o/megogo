@@ -81,6 +81,7 @@ class Megogo
             'text' => $text,
             'limit' => $limit,
         ];
+//        dd($data);
         $response = $this->client->request('GET', $this->api_url . '/search', [
             'query' => [
                 'text' => $text,
@@ -114,7 +115,7 @@ class Megogo
         }
         $data = [
             'offset' => $offset,
-            'subscription_id' => 131,
+            //'subscription_id' => 131,
         ];
         if ($category_id) {
             $data['category_id'] = $category_id;
@@ -139,7 +140,7 @@ class Megogo
         }
         $query = [
             'offset' => $offset,
-            'subscription_id' => 131,
+            //'subscription_id' => 131,
             'sign' => $this->makeHash($data)
         ];
         if ($category_id) {
